@@ -28,6 +28,15 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+            
+            elif event.type == pygame.VIDEORESIZE:
+                # Handle window resizing
+                screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
+                current_screen_width, current_screen_height = event.size
+                player.update_screen_size(current_screen_width, current_screen_height)
+                asteroid_field.update_screen_size(current_screen_width, current_screen_height)
+                for a in asteroids:
+                    a.update_screen_size(current_screen_width, current_screen_height)
         
         for u in updatable:
             u.update(dt)

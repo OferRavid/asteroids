@@ -31,9 +31,15 @@ class AsteroidField(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self, self.containers)
         self.spawn_timer = 0.0
+        self.screen_width = SCREEN_WIDTH
+        self.screen_height = SCREEN_HEIGHT
+
+    def update_screen_size(self, width, height):
+        self.screen_width = width
+        self.screen_height = height
 
     def spawn(self, radius, position, velocity):
-        asteroid = Asteroid(position.x, position.y, radius)
+        asteroid = Asteroid(position.x, position.y, radius, self.screen_width, self.screen_height)
         asteroid.velocity = velocity
 
     def update(self, dt):

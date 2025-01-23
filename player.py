@@ -9,6 +9,12 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
         self.shot_timer = 0
+        self.screen_width = SCREEN_WIDTH
+        self.screen_height = SCREEN_HEIGHT
+
+    def update_screen_size(self, width, height):
+        self.screen_width = width
+        self.screen_height = height
 
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), 2)
@@ -48,3 +54,16 @@ class Player(CircleShape):
         if keys[pygame.K_SPACE]:
             if self.shot_timer <= 0:
                 self.shoot()
+        
+        self.edge_wrap()
+
+    def edge_wrap(self):
+        if self.position.x < -self.radius:
+            self.position.x = self.screen_width + self.radius
+        elif self.position.x > self.screen_width + self.radius:
+            self.position.x = -self.radius
+
+        if self.position.y < -self.radius:
+            self.position.y = self.screen_height + self.radius
+        elif self.position.y > self.screen_height + self.radius:
+            self.position.y = -self.radius
