@@ -30,9 +30,9 @@ class Player(CircleShape):
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
     
-    def move(self, dt):
-        forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+    # def move(self, dt):
+    #     forward = pygame.Vector2(0, 1).rotate(self.rotation)
+    #     self.position += forward * PLAYER_SPEED * dt
     
     def shoot(self):
         shot = Shot(self.position.x, self.position.y)
@@ -47,23 +47,26 @@ class Player(CircleShape):
             self.rotate(-dt)
         if keys[pygame.K_d]:
             self.rotate(dt)
-        if keys[pygame.K_w]:
-            self.move(dt)
-        if keys[pygame.K_s]:
-            self.move(-dt)
+        # if keys[pygame.K_w]:
+        #     self.move(dt)
+        # if keys[pygame.K_s]:
+        #     self.move(-dt)
         if keys[pygame.K_SPACE]:
             if self.shot_timer <= 0:
                 self.shoot()
         
-        self.edge_wrap()
+    #     self.edge_wrap()
 
-    def edge_wrap(self):
-        if self.position.x < -self.radius:
-            self.position.x = self.screen_width + self.radius
-        elif self.position.x > self.screen_width + self.radius:
-            self.position.x = -self.radius
+    # def edge_wrap(self):
+    #     if self.position.x < -self.radius:
+    #         self.position.x = self.screen_width + self.radius
+    #     elif self.position.x > self.screen_width + self.radius:
+    #         self.position.x = -self.radius
 
-        if self.position.y < -self.radius:
-            self.position.y = self.screen_height + self.radius
-        elif self.position.y > self.screen_height + self.radius:
-            self.position.y = -self.radius
+    #     if self.position.y < -self.radius:
+    #         self.position.y = self.screen_height + self.radius
+    #     elif self.position.y > self.screen_height + self.radius:
+    #         self.position.y = -self.radius
+    
+    def forward_vector(self):
+        return pygame.Vector2(0, 1).rotate(self.rotation)
