@@ -5,39 +5,47 @@ from circleshape import CircleShape
 
 
 class Asteroid(CircleShape):
-    def __init__(self, x, y, radius, screen_width, screen_height):
+    def __init__(self, x, y, radius, screen_width, screen_height, color=None):
         super().__init__(x, y, radius)
         self.screen_width = screen_width
         self.screen_height = screen_height
+        if color != None:
+            self.color = color
+        else:
+            self.color = random.choice([
+                (255, 255, 255),  # White
+                (255, 255, 255),  # White
+                (255, 255, 255),  # White
+                (255, 255, 255),  # White
+                (200, 200, 255),  # Blue-white
+                (255, 200, 150),  # Yellow-white
+                (255, 150, 100),  # Orange
+                (255, 100, 100),  # Red
+            ])
 
     def update_screen_size(self, width, height):
         self.screen_width = width
         self.screen_height = height
     
     def draw(self, screen):
-        pygame.draw.circle(screen, "white", self.position, self.radius, width=2)
+        pygame.draw.circle(screen, self.color, self.position, self.radius, width=2)
     
     def update(self, dt):
         self.position += self.velocity * dt
         self.edge_wrap()
     
     def split(self):
-        old_velocity = self.velocity
-        old_radius = self.radius
-        old_position = self.position
-        old_screen_width = self.screen_width
-        old_screen_height = self.screen_height
         self.kill()
-        if old_radius <= ASTEROID_MIN_RADIUS:
+        if self.radius <= ASTEROID_MIN_RADIUS:
             return
         
         random_angle = random.uniform(20, 50)
-        right_velocity = old_velocity.rotate(random_angle)
-        left_velocity = old_velocity.rotate(-random_angle)
-        radius = old_radius - ASTEROID_MIN_RADIUS
-        right_asteroid = Asteroid(old_position.x, old_position.y, radius, old_screen_width, old_screen_height)
+        right_velocity = self.velocity.rotate(random_angle)
+        left_velocity = self.velocity.rotate(-random_angle)
+        radius = self.radius - ASTEROID_MIN_RADIUS
+        right_asteroid = Asteroid(self.position.x, self.position.y, radius, self.screen_width, self.screen_height, self.color)
         right_asteroid.velocity = right_velocity * 1.2
-        left_asteroid = Asteroid(old_position.x, old_position.y, radius, old_screen_width, old_screen_height)
+        left_asteroid = Asteroid(self.position.x, self.position.y, radius, self.screen_width, self.screen_height, self.color)
         left_asteroid.velocity = left_velocity * 1.2
     
     def edge_wrap(self):
