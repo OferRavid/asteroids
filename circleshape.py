@@ -1,9 +1,19 @@
-import pygame
+import pygame # type: ignore
 
 # Base class for game objects
 class CircleShape(pygame.sprite.Sprite):
+    """Represents a circular shape with position, velocity, and radius."""
+
     def __init__(self, x, y, radius):
-        # we will be using this later
+        """
+        Initialize the circle's position, radius, and default velocity.
+
+        Args:
+            x (float): Initial x-coordinate.
+            y (float): Initial y-coordinate.
+            radius (int): Radius of the circle.
+        """
+        # If object has "containers" attribute, give it to super() for initialization
         if hasattr(self, "containers"):
             super().__init__(self.containers)
         else:
@@ -23,3 +33,7 @@ class CircleShape(pygame.sprite.Sprite):
 
     def has_collided(self, other):
         return self.position.distance_to(other.position) <= self.radius + other.radius
+
+    def kill(self):
+        """Remove the circle from all sprite groups."""
+        super().kill()

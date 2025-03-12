@@ -1,5 +1,8 @@
+"""
+main.py - Handles the logic for running the Asteroids game.
+"""
 import sys
-import pygame
+import pygame # type: ignore
 import random
 from constants import *
 from player import Player
@@ -8,8 +11,12 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from star import Star
 
-
 def main():
+    """
+    Main game loop for the Asteroids game.
+
+    Initializes Pygame, sets up the screen, creates game objects, and handles the main event loop.
+    """
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
     game_clock = pygame.time.Clock()
@@ -22,6 +29,7 @@ def main():
     shots = pygame.sprite.Group()
     stars = pygame.sprite.Group()
 
+    # Assign sprite groups to classes
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = (updatable)
@@ -32,19 +40,19 @@ def main():
     player = Player(screen_width / 2, screen_height / 2)
     asteroid_field = AsteroidField()
 
-    # Create stars
-    stars_resizer = 1
+    # Create stars for the background
     stars = [
         Star(random.randint(0, screen_width), random.randint(0, screen_height), random.randint(100, 255))
         for _ in range(250)
     ]
 
+    # Main game loop
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                return  # Exit the game loop
             elif event.type == pygame.VIDEORESIZE:
-                stars_resizer = 3//stars_resizer
+                # Adjust screen size and elements when window is resized
                 screen = pygame.display.set_mode(event.size, pygame.RESIZABLE)
                 screen_width, screen_height = event.size
                 player.update_screen_size(screen_width, screen_height)
@@ -54,10 +62,10 @@ def main():
                     a.update_screen_size(screen_width, screen_height)
                 stars = [
                     Star(random.randint(0, screen_width), random.randint(0, screen_height), random.randint(100, 255), screen_width, screen_height)
-                    for _ in range(250 * stars_resizer)
+                    for _ in range(random.choice([250, 500, 750]))
                 ]
 
-        # Player movement offset
+        # Calculate movement offset based on player input
         keys = pygame.key.get_pressed()
         offset = pygame.Vector2(0, 0)
         if keys[pygame.K_w]:
@@ -65,38 +73,36 @@ def main():
         if keys[pygame.K_s]:
             offset -= player.forward_vector() * PLAYER_SPEED * dt
 
-        # Update all elements with the offset
+        # Update all updatable game objects
         for u in updatable:
             u.update(dt)
 
-        # Update stars with offset
+        # Update star positions with player movement offset
         for star in stars:
             star.update(offset)
 
-        # Check collisions
+        # Check for collisions between asteroids and player or shots
         for a in asteroids:
             a.position += offset
             if a.has_collided(player):
                 print("Game over!")
-                sys.exit()
+                sys.exit()  # End game on collision with player
             for shot in shots:
                 if a.has_collided(shot):
-                    a.split()
-                    shot.kill()
+                    a.split()  # Split asteroid on collision
+                    shot.kill()  # Remove shot on collision
 
-        # Draw background
+        # Draw background and stars
         screen.fill("black")
-
         for star in stars:
             star.draw(screen)
 
-        # Draw all drawable elements
+        # Draw all drawable game elements
         for d in drawable:
             d.draw(screen)
 
-        pygame.display.flip()
-        dt = game_clock.tick(60) / 1000
-
+        pygame.display.flip()  # Update the display
+        dt = game_clock.tick(60) / 1000  # Maintain 60 FPS
 
 if __name__ == "__main__":
     main()
